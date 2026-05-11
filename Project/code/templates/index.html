@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dietary Recipe Helper</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #f7f8fa;
+      --surface:   #ffffff;
+      --border:    #e4e8ef;
+      --accent:    #1a56db;
+      --accent-lt: #eff4ff;
+      --accent-dk: #1341b0;
+      --text-1:    #0f1623;
+      --text-2:    #4b5563;
+      --text-3:    #9ca3af;
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text-1);
+      min-height: 100vh;
+    }
+
+    .header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-logo {
+      width: 34px;
+      height: 34px;
+      background: var(--accent);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 17px;
+    }
+
+    .header-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      color: var(--text-1);
+    }
+
+    .hero {
+      max-width: 760px;
+      margin: 52px auto 0;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.8rem;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text-1);
+      margin-bottom: 14px;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--text-2);
+      font-weight: 300;
+      line-height: 1.65;
+      max-width: 520px;
+      margin: 0 auto 40px;
+    }
+
+    .form-wrap {
+      max-width: 820px;
+      margin: 0 auto 60px;
+      padding: 0 24px;
+    }
+
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .section {
+      padding: 32px 36px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section:last-of-type { border-bottom: none; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .step-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    .section-hint {
+      font-size: 0.85rem;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+
+    .allergen-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .allergen-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-2);
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .allergen-pill:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-lt);
+    }
+
+    .allergen-pill input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--accent);
+    }
+
+    .category-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .cat-btn {
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: var(--text-2);
+      padding: 8px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.15s ease;
+    }
+
+    .cat-btn:hover {
+      background: var(--accent-lt);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .cat-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 7px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text-1);
+      background: var(--bg);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .field input::placeholder { color: var(--text-3); }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .submit-section {
+      padding: 28px 36px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .disclaimer {
+      font-size: 0.82rem;
+      color: var(--text-3);
+      max-width: 380px;
+      line-height: 1.5;
+    }
+
+    .submit-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 13px 32px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .submit-btn:hover { background: var(--accent-dk); }
+    .submit-btn:active { transform: scale(0.98); }
+
+    @media (max-width: 600px) {
+      .header { padding: 16px 20px; }
+      .hero h1 { font-size: 2rem; }
+      .section { padding: 24px 20px; }
+      .submit-section { flex-direction: column; align-items: stretch; }
+      .submit-btn { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo">🥗</div>
+    <span class="header-title">Dietary Recipe Helper</span>
+  </header>
+
+  <div class="hero">
+    <h1>Find recipes that<br>work for you</h1>
+    <p>Allergen-safe suggestions ranked by your nutrition targets, powered by a machine learning recommender.</p>
+  </div>
+
+  <div class="form-wrap">
+    <div class="form-card">
+      <form action="/results" method="POST">
+
+        <div class="section">
+          <div class="section-header">
+            <div class="step-badge">1</div>
+            <div>
+              <div class="section-title">Choose allergens to avoid</div>
+              <div class="section-hint">Recipes containing these will be excluded</div>
+            </div>
+          </div>
+          <div class="allergen-grid">
+           {% for allergen in allergens %}
+  <label class="allergen-pill">
+    <input type="checkbox" name="allergens" value="{{ allergen }}">
+    <span>{{ allergen.replace('_', ' ') }}</span>
+  </label>
+{% endfor %}
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <div class="step-badge">2</div>
+            <div>
+              <div class="section-title">What do you want to eat?</div>
+              <div class="section-hint">Pick a category or type your own keyword</div>
+            </div>
+          </div>
+          <div class="category-row">
+            {% for category in categories %}
+              <button type="button" class="cat-btn" onclick="setQuery('{{ category }}', this)">
+                {{ category }}
+              </button>
+            {% endfor %}
+          </div>
+          <div class="field">
+            <label for="query">Meal type or keyword</label>
+            <input type="text" id="query" name="query" placeholder="e.g. pasta, soup, chicken, salad" required>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <div class="step-badge">3</div>
+            <div>
+              <div class="section-title">Nutrition targets</div>
+              <div class="section-hint">Optional — leave blank to skip</div>
+            </div>
+          </div>
+          <div class="fields-grid">
+            <div class="field">
+              <label for="calorie_target">Calories per meal</label>
+              <input type="number" id="calorie_target" name="calorie_target" min="0" placeholder="e.g. 600">
+            </div>
+            <div class="field">
+              <label for="min_protein_g">Minimum protein (g)</label>
+              <input type="number" id="min_protein_g" name="min_protein_g" min="0" placeholder="e.g. 20">
+            </div>
+            <div class="field">
+              <label for="max_sodium_mg">Maximum sodium (mg)</label>
+              <input type="number" id="max_sodium_mg" name="max_sodium_mg" min="0" placeholder="e.g. 800">
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <div class="step-badge">4</div>
+            <div>
+              <div class="section-title">Preferences</div>
+              <div class="section-hint">Separate multiple items with a comma</div>
+            </div>
+          </div>
+          <div class="fields-grid">
+            <div class="field">
+              <label for="likes">Likes</label>
+              <input type="text" id="likes" name="likes" placeholder="e.g. italian, garlic">
+            </div>
+            <div class="field">
+              <label for="dislikes">Dislikes</label>
+              <input type="text" id="dislikes" name="dislikes" placeholder="e.g. tomato, spicy">
+            </div>
+          </div>
+        </div>
+
+        <div class="submit-section">
+          <p class="disclaimer">This tool provides general lifestyle guidance only and does not constitute medical advice.</p>
+          <button type="submit" class="submit-btn">Find Safe Recipes →</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function setQuery(category, btn) {
+      document.getElementById("query").value = category;
+      document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+  </script>
+</body>
+</html>

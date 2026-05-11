@@ -1,0 +1,13 @@
+import pandas as pd
+
+files = [
+    "FOOD-DATA-GROUP1.csv",
+    "FOOD-DATA-GROUP2.csv",
+    "FOOD-DATA-GROUP3.csv",
+    "FOOD-DATA-GROUP4.csv",
+    "FOOD-DATA-GROUP5.csv"
+]
+
+dfs = [pd.read_csv(f) for f in files]
+
+food_data = pd.concat(dfs, ignore_index=True)
